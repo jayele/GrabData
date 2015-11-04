@@ -1,0 +1,12 @@
+操作方法
+
+步骤1:
+	进入setup.sh所在目录,执行该程序
+	$ bash setup.sh
+	该文件主要下载并整理出RF.js(让分文件) 和 BF.js(比分文件)
+
+步骤2:
+	使用浏览器打开 http://localhost/ball/web/tongji.html
+	该文件一表格的形式,显示出需要的结果
+
+	主要处理过程都在 tongji.html中script部分

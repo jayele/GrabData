@@ -1,0 +1,40 @@
+                                        
+div class="infocontact"
+div class="contacttitle"
+联系人：
+/div
+div class="contactvalue"
+好数英
+span style="padding-left:5px;color:#C51B26;"
+（个人）
+/span
+/div
+/div
+
+                                        
+div class="infocontact"
+div class="contacttitle"
+联系电话：
+/div
+div class="contactvalue"
+15191428052
+/div
+/div
+
+                                    
+div class="contactvalue"
+a href='/yanta/jiajiao/'
+雁塔区
+/a
+ - 
+a href='/xiaozhailu/jiajiao/'
+小寨路
+/a
+ 
+/div
+
+                                    
+div class="contactvalue"
+西安雁塔小寨路雁塔，长安
+/div
+

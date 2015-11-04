@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>RES</title>
+	<script>
+	var bDt = new Array();
+	</script>
+	<script src="BF.js"></script>
+	<script src="RF.js"></script>
+<script>
+window.onload=function() {
+
+	var total_page = bOdds.length; //下载总页数
+	var NUM=[]; //保存每页多少个可用数据==>每页的让分数据
+	var p=0;
+	while(p < total_page) {
+		var len = 0;
+		for(x in bOdds[p]) {
+				len++;
+		}
+		NUM[p] = len;
+		p++;
+	}
+
+	var result = new Array();  // 保存最后比分
+
+	var curr_page=0;
+	while(curr_page < total_page) {
+		var curr = bOdds[curr_page];
+		result[curr_page] = new Array();
+		for(index in curr) {
+			if ('HB' in curr[index]) {
+				oHb = curr[index].HB;
+			} else {
+				oHb = new Array();
+			}
+
+			for(index2 in oHb) {
+				var rf = getRf(oHb[index2][3]);
+				var flag=oHb[index2][4]; // 如果标志为1说明是B队让A队 标志为0A队让B队[一般这个多]
+				var bDt = eval('bDt'+curr_page);
+				// 让分中存在的是否在比分文件中也存在
+				if(!bDt[index]) continue;
+				// 如果是A队让B队则正常取其比分  如果B队让A队则 反过来取其比分
+				if(!flag) {
+					teamA = [bDt[index][10],bDt[index][11],bDt[index][12],bDt[index][13]];
+					teamB = [bDt[index][17],bDt[index][18],bDt[index][19],bDt[index][20]];
+				} else {
+					teamA = [bDt[index][17],bDt[index][18],bDt[index][19],bDt[index][20]];
+					teamB = [bDt[index][10],bDt[index][11],bDt[index][12],bDt[index][13]];
+				}
+
+				var index3=0, win=0, shu=0;
+				var fB40=false; // 标志前两场 是否为2:0 [false:不是,true:是]
+				var fB04=false; // 标志前两场 是否为0:2 [false:不是,true:是]
+				var fB20_all=false; // 标志前两场 是否为0:2 [false:不是,true:是]
+				var fB02_all=false; // 标志前两场 是否为0:2 [false:不是,true:是]
+				while(index3 < teamA.length) {
+					if(teamA[index3]-teamB[index3] > rf) {
+						win++;
+					} else {
+						shu++;
+					}
+				  	index3++;
+					// if ( (win == 2) && (shu == 0) ) { // 此种情况是 前两场 2:0  简写为下面的写法
+					//   	fB20 = true;
+					// }
+					((win == 2)&&(shu == 0)) && (fB20_all=true);
+					((win == 0)&&(shu == 2)) && (fB02_all=true);
+				}
+
+				if( (fB20_all == true) && (win == 4) ) { // 获取fB20前提下的4:0
+					fB40 = true;
+				}
+
+				if( (fB02_all == true) && (win == 0) ) { // 获取fB20前提下的0:4
+					fB04 = true;
+				}
+
+
+
+				// 这里控制需要输出信息
+				result[curr_page][index]={'flag40':fB40,'flag04':fB04,
+											'flag02_all':fB02_all,'flag20_all':fB20_all,
+											'win':win,'shu':shu,
+											'name':bDt[index][3],
+											'teamA':bDt[index][6],'teamB':bDt[index][8]};
+			}
+		}
+		curr_page++;
+	}
+
+	console.log(result);
+
+	/**
+	* @param  (float)real 真实让分
+	* @return (float)具体比较时的数值
+	*/
+	function getRf(real) {
+		rf_t = real/4;
+		t = Math.ceil(rf_t);
+		(t-0.5 >= rf_t) && (t = Math.floor(rf_t)+0.5);
+		return t;
+	}
+
+
+	/* --------------------输出显示----------------------- */
+	var table = ''; // 保存输出的html表格
+	var TJ = new Array(); // 保存统计结果
+	var nav = '<ul>';//生成导航html
+	for(var i=0,len=result.length; i<len; i++) {
+		nav += '<li><a href="#t_'+i+'">第'+(i+1)+'天</a></li>';
+		table += '<table id="t_'+i+'">';
+		table += '<tr><th colspan="4">第'+(i+1)+'天</th></tr>';
+		table += '<th>赛名</th><th>teamA</th><th>比分</th><th>teamB</th>';
+
+		var cnt=0;//记录比赛场数
+		var b04=0;//记录0:4的条数
+		var b13=0;//记录1:3的条数
+		var b22=0;//记录2:2的条数
+		var b31=0;//记录3:1的条数
+		var b40=0;//记录4:0的条数
+		var b20=0;//记录2:0的条数**
+		var b02=0;//记录0:2的条数**
+		var b0204=0;//记录0:2前提下是0:4**
+		var b2040=0;//记录2:0前提下是4:0**
+		for(index in result[i]) {
+			var win = result[i][index].win;
+			var fB20 = result[i][index].flag20_all; // 是否2:0
+			var fB02 = result[i][index].flag02_all; // 是否0:2
+
+			var fB04 = result[i][index].flag04; // 0:2前提下是0:4
+			var fB40 = result[i][index].flag40; // 2:0前提下是4:0
+
+			if(fB20) { // 2:0情况
+				b20++;
+				if(fB40) {
+					b2040++;
+					table += '<tr style="background:yellow">';
+				} else {
+					table += '<tr class="b20">';
+				}
+			} else if(fB02) {
+				b02++;
+				if(fB04) {
+					b0204++;
+					table += '<tr style="background:purple">';
+				} else {
+					table += '<tr class="b02">';
+				}
+			} else {
+				table += '<tr>';
+			}
+			
+			table += '<td>'+result[i][index].name+'</td>';
+			table += '<td>'+result[i][index].teamA+'</td>';
+			table += '<td>'+win+' : '+result[i][index].shu+'</td>';
+			table += '<td>'+result[i][index].teamB+'</td>';
+			table += '</tr>';
+
+			switch(win) {
+				case 0:
+					b04++; break;
+				case 1:
+					b13++; break;
+				case 2:
+					b22++; break;
+				case 3:
+					b31++; break;
+				case 4:
+					b40++;
+			}
+			cnt++;
+		}
+		table += '</table>';
+		TJ[i] = {'total':cnt,'b2040':b2040,'b0204':b0204,'b20':b20,'b02':b02,'b04':b04,'b13':b13,'b22':b22,'b31':b31,'b40':b40};
+	}
+
+	nav += '</ul>';
+	var oTb = document.getElementById('table');
+	var oNav = document.getElementById('nav');
+	oTb.innerHTML = table;
+	oNav.innerHTML = nav;
+	
+
+	/*********生成一张统计表*********/
+	var i=0
+	var tj_table = '<h1>统计</h1><table><th>第几天</th><th>总场数</th><th>0:2/0:4</th><th>2:0/4:0</th><th>0:2</th><th>2:0</th><th>0:4</th><th>4:0</th><th>1:3</th><th>2:2</th><th>3:1</th>';
+	var total_bisai=0; // 保存总比赛场数
+	var total_04=0; // 保存0:4总场数
+	var total_13=0;
+	var total_22=0;
+	var total_31=0;
+	var total_40=0;
+	var total_20=0;
+	var total_02=0;
+
+	var total_0204=0;
+	var total_2040=0;
+	while(i < TJ.length) {
+		tj_table += '<tr>';
+		tj_table += '<td>' + (i+1) + '</td>';
+		tj_table += '<td>' + TJ[i].total + '</td>';
+		tj_table += '<td>' + TJ[i].b0204 + '</td>';
+		tj_table += '<td>' + TJ[i].b2040 + '</td>';
+		tj_table += '<td>' + TJ[i].b02 + '</td>';
+		tj_table += '<td>' + TJ[i].b20 + '</td>';
+		tj_table += '<td>' + TJ[i].b04 + '</td>';
+		tj_table += '<td>' + TJ[i].b40 + '</td>';
+		tj_table += '<td>' + TJ[i].b13 + '</td>';
+		tj_table += '<td>' + TJ[i].b22 + '</td>';
+		tj_table += '<td>' + TJ[i].b31 + '</td>';
+		tj_table += '</tr>';
+
+		total_bisai += TJ[i].total;
+		total_2040 += TJ[i].b2040;
+		total_0204 += TJ[i].b0204;
+		total_20 += TJ[i].b20; total_02 += TJ[i].b02;
+		total_04 += TJ[i].b04;total_40 += TJ[i].b40;
+		total_13 += TJ[i].b13; total_22 += TJ[i].b22; total_31 += TJ[i].b31;
+		i++;
+	}
+	// 组合总统记最后一行数据 其中百分比保留两位有效数字
+	tj_table += '<td>总统计</td>';
+	tj_table += '<td>' + total_bisai + '</td>'
+	tj_table += '<td>'+ total_0204 + '(' + (total_0204*100/total_02).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_2040 + '(' + (total_2040*100/total_20).toFixed(2) + '%)</td>';
+
+	tj_table += '<td>'+ total_02 + '(' + (total_02*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_20 + '(' + (total_20*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_04 + '(' + (total_04*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_40 + '<br/>(' + (total_40*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_13 + '(' + (total_13*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_22 + '(' + (total_22*100/total_bisai).toFixed(2) + '%)</td>';
+	tj_table += '<td>'+ total_31 + '(' + (total_31*100/total_bisai).toFixed(2) + '%)</td></table>';
+	// tj_table += '</table>';
+
+	// 将统计表格添加到DOM中
+	var oTj = document.getElementById('tj');
+	oTj.innerHTML = tj_table;
+}
+</script>
+<!-- 为表格添加样式 -->
+<style>
+	th,td{padding:5px 2px;text-align: center;font-size: 14px;}
+	th{background: #abcdef;}
+	tr:nth-child(2n) {background: #ccc;}
+	#table tr td:nth-child(3){font-weight:bold;color: green;}
+#nav{position: fixed;top:0px;left:370px;}
+#nav li{list-style: none;margin-bottom:3px;}
+#nav li a{display:inline;padding:3px 20px;background: #333;color:#ccc;text-decoration: none;cursor:pointer;}
+#nav li a:hover{background: #ccc;color:#333;}
+#tj{height:100%;position: fixed;left:520px;top:0px;overflow: scroll;}
+#tj th,#tj td{padding:4px 2px;}
+#tj td:nth-child(3){color:purple;font-weight: bold;}
+#tj td:nth-child(4){color:yellow;font-weight: bold;}
+#tj td:nth-child(5){color:blue;font-weight: bold;}
+#tj td:nth-child(6){color:red;font-weight: bold;}
+#tj tr:last-child{background: #555;font-weight: bold;color:#fff;font-size: 18px;}
+#tj tr:last-child td{height:50px;padding:0;}
+#nav{height:100%;overflow: scroll;}
+#table tr.b20{background: red;color:#fff !important}
+#table tr.b02{background: blue;color:#fff;}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div id="table"></div>
+<div id="tj"></div>
+</body>
+</html>

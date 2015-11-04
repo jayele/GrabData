@@ -1,0 +1,7 @@
+1:bash getlink.sh	#活取所有指定x->Y网页上的链接到all-link.txt中
+2:cd /tmp-data		#
+3:wget -i ../all-link.txt #下载所有all-link.txt文件中的链接网页
+4:bash ../download-link.sh #遍历当前目录所有的网页,匹配所需信息  返回index.html和result.csv两个文件
+
+
+注:download-link.sh 是主要的(匹配能力较强)

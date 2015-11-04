@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+<style>
+* {font-family: "Microsoft YaHei", Arial, sans-serif; }
+body { background-color:#3c3c3c;}
+h1, table { text-align: center; }
+table {border-collapse: collapse;  width: 85%; margin: 0 auto;box-shadow: 1px 1px 15px #000}
+th, td { padding: 1rem; font-size: 1rem; cursor: pointer;}
+tr {background: hsl(50, 50%, 80%); }
+tr, td { transition: .1s ease-in;-webkit-transition: .1s ease-in; } 
+tr:first-child {background: hsla(12, 100%, 40%, 0.5); }
+tr:nth-child(even) { background: hsla(50, 50%, 80%, 0.7); }
+td:empty {background: hsla(50, 25%, 60%, 0.7); }
+tr:hover:not(#firstrow) { font-size:4rem; background:purple;box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.5);}
+tr:hover:not(#firstrow) td { font-weight:400;color:#fff;}
+.mask{color: transparent;text-shadow: 0 0 3px #000;}
+</style>
+<script>
+window.onload=function() {var oTr = document.getElementsByTagName('tr');
+	for (var i=1,len = oTr.length ; i < len; i++) {
+		oTr[i].index = i;
+		oTr[i].onclick=function() {
+			if (oTr[this.index].className=='mask') {
+				oTr[this.index].className = '';
+			} else {
+				oTr[this.index].className='mask';
+			}
+		}
+	};
+}
+</script>
+</head>
+<body>
+	<h1>家教-www.xianyang.qu114/jiajiao/</h1>
+
+<table id="racetimes">
+<tr id="firstrow">
+      <th>ID</th>
+      <th>联系人</th>
+      <th>形式</th>
+      <th>电话</th>
+      <th>学科</th>
+  </tr>
+<tr><td>1</td><td><strong>冯凯</strong></td><td>（个人）</td><td>18329488974</td><td>数学</td></tr>
+<tr><td>2</td><td><strong>于同学</strong></td><td>（个人）</td><td>18991933872</td><td>辅导班</td></tr>
+<tr><td>3</td><td><strong> </strong></td><td>(机构)</td><td>18791079608</td><td>辅导班</td></tr>
+<tr><td>4</td><td><strong>张姣</strong></td><td>（个人）</td><td>18717260232</td><td>英语</td></tr>
+<tr><td>5</td><td><strong>田老师</strong></td><td>（个人）</td><td>15706015217</td><td>英语</td></tr>
+<tr><td>6</td><td><strong> </strong></td><td>(机构)</td><td>18329756743</td><td>辅导班</td></tr>
+<tr><td>7</td><td><strong>王同学</strong></td><td>（个人）</td><td>18791004705</td><td>辅导班</td></tr>
+<tr><td>8</td><td><strong>魏老师</strong></td><td>（个人）</td><td>13892019731</td><td>数学</td></tr>
+<tr><td>9</td><td><strong>黄老师</strong></td><td>（个人）</td><td>13212040972</td><td>辅导班</td></tr>
+<tr><td>10</td><td><strong>李老师</strong></td><td>（个人）</td><td>18220091134</td><td>辅导班</td></tr>
+<tr><td>11</td><td><strong>刘同学</strong></td><td>（个人）</td><td>15009180191</td><td>辅导班</td></tr>
+<tr><td>12</td><td><strong>马老师</strong></td><td>（个人）</td><td>13201928176</td><td>辅导班</td></tr>
+<tr><td>13</td><td><strong>樊老师</strong></td><td>（个人）</td><td>33219191</td><td>辅导班</td></tr>
+<tr><td>14</td><td><strong>胡老师</strong></td><td>（个人）</td><td>18182509757</td><td>辅导班</td></tr>
+</table>
+</body>
+</html>
